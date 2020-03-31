@@ -1,11 +1,11 @@
 # LyricsToFTP
 Automator script in JXA to add lyrics to a Final Cut Pro X Library.
 
-**Introduction**
+##**Introduction**
 This installer will install a service that can run on any text selection and generate a series of 5s titles in Final Cut Pro for every pair of lines of text.
 
 
-**Installation**
+##**Installation**
 For clarity, this will install the following files:
 
 ~/Library/Application Support/LyricsToFCP/FCPLyricsBlank.fcpxml <-- template file that the script modifies
@@ -15,7 +15,7 @@ For clarity, this will install the following files:
 ~/Movies/Motion Templates/Titles/Lyrics/2 Lines <--Final Cut Pro Title used in script.
 
 
-**Usage**
+##**Usage**
 With any text selected, right click -> Services -> Send Lyrics to Final Cut Pro.
 
 Note: The first line of text will be used as the title and will not appear in the timeline in Final Cut Pro.
@@ -23,7 +23,7 @@ Note: The first line of text will be used as the title and will not appear in th
 A double line break will indicate the start of a new section and prevent the last line of a verse running into a chorus.
 
 
-**Sample Lyrics**
+###**Sample Lyrics**
 
 `Amazing grace
 
