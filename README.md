@@ -9,7 +9,7 @@ This package will install a service that can run on any text selection and gener
 
 
 ## **Installation**
-For clarity, this will install the following files:
+Running the installer will install the following files:
 
 ~/Library/Application Support/LyricsToFCP/FCPLyricsBlank.fcpxml <-- template file that the script modifies
 
