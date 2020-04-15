@@ -1,0 +1,106 @@
+//Written to be run as an Automator workflow in MacOS.
+
+function run(input, parameters) {
+
+//Include OSA library
+var app = Application.currentApplication()
+app.includeStandardAdditions = true
+var userPath = app.pathTo ('home folder')
+
+var captionsInput = input.toString()
+
+//Applescript/JXA boilerplate function
+function writeTextToFile(text, file, overwriteExistingContent) {
+    try {
+
+        // Convert the file to a string
+        var fileString = file.toString()
+
+        // Open the file for writing
+        var openedFile = app.openForAccess(Path(fileString), { writePermission: true })
+
+        // Clear the file if content should be overwritten
+        if (overwriteExistingContent) {
+            app.setEof(openedFile, { to: 0 })
+        }
+
+        // Write the new content to the file
+        app.write(text, { to: openedFile, startingAt: app.getEof(openedFile) })
+
+        // Close the file
+        app.closeAccess(openedFile)
+
+        // Return a boolean indicating that writing was successful
+        return true
+    }
+    catch(error) {
+
+        try {
+            // Close the file
+            app.closeAccess(file)
+        }
+        catch(error) {
+            // Report the error is closing failed
+            console.log(`Couldn't close file: ${error}`)
+        }
+
+        // Return a boolean indicating that writing was successful
+        return false
+    }
+}
+
+//Generate an XML text block
+
+var textImport = captionsInput.split("\n\n")
+var projectTitle = textImport[0]
+var textArray = []
+
+//Import iTT template
+var iTTString = userPath.toString() + '/Library/Application Support/CaptionsToFCP/FCPCaptionsBlank.itt'
+var iTTBlank = app.read(Path(iTTString))
+
+var captionPlaceholder = "<p begin="00:00:00:00" end="00:00:10:00" region="bottom">No captions have been added<br/>View the readme for instructions on how to use this script</p>"
+
+var captionPrefix = "<p begin="00:00:00:00" end="00:00:10:00" region="bottom">"
+var captionSuffix = "</p>"
+
+for (var i=1; i< textImport.length; i++){
+var sectionText = textImport[i].split("\n")
+  for (var j=0; j<sectionText.length; j=j+2){
+    var textPair = sectionText[j]+ (sectionText[j+1] ? ("<br/>" + sectionText[j+1]):"")
+    textArray.push(textPair)
+  }
+}
+
+function wrapCaptionTags(in) {
+var captionsTags = captionPlaceholder.split("blankTitle").join(in)
+return captionsTags
+}
+
+var replacementString = ""
+for (let element of textArray) {
+replacementString = replacementString + "\n"+ captionPrefix + element + captionSuffix
+};
+
+var generateITT = iTTBlank.replace(captionPlaceholder, replacementString)
+
+//remove curly quotes (app.write doesn't like them)
+generateITT = generateITT.replace(/[\u2018\u2019]/g,"'")
+
+//Create filepath
+
+var fileDir = userPath.toString() + '/Library/Application Support/CaptionsToFCP/iTT/'
+
+var fileName = fileDir + projectTitle + ".itt";
+
+//save textblock to file
+writeTextToFile (generateITT, fileName, true)
+
+//send to FCPX
+var FCP = Application('Final Cut Pro')
+FCP.activate()
+//FCP.open(fileName)
+
+//Tell FCPX to import captions
+
+}
