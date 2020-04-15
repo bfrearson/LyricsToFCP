@@ -1,6 +1,7 @@
-//Written to be run as an Automtor workflow in MacOS.
+//Written to be run as an Automator workflow in MacOS.
 
 function run(input, parameters) {
+
 //Include OSA library
 var app = Application.currentApplication()
 app.includeStandardAdditions = true
@@ -8,33 +9,32 @@ var userPath = app.pathTo ('home folder')
 
 var lyricsInput = input.toString()
 
-
-//Apple boilerplate function
+//Applescript/JXA boilerplate function
 function writeTextToFile(text, file, overwriteExistingContent) {
     try {
- 
+
         // Convert the file to a string
         var fileString = file.toString()
- 
+
         // Open the file for writing
         var openedFile = app.openForAccess(Path(fileString), { writePermission: true })
- 
+
         // Clear the file if content should be overwritten
         if (overwriteExistingContent) {
             app.setEof(openedFile, { to: 0 })
         }
- 
+
         // Write the new content to the file
         app.write(text, { to: openedFile, startingAt: app.getEof(openedFile) })
- 
+
         // Close the file
         app.closeAccess(openedFile)
- 
+
         // Return a boolean indicating that writing was successful
         return true
     }
     catch(error) {
- 
+
         try {
             // Close the file
             app.closeAccess(file)
@@ -43,7 +43,7 @@ function writeTextToFile(text, file, overwriteExistingContent) {
             // Report the error is closing failed
             console.log(`Couldn't close file: ${error}`)
         }
- 
+
         // Return a boolean indicating that writing was successful
         return false
     }
@@ -55,14 +55,15 @@ var textImport = lyricsInput.split("\n\n")
 var songTitle = textImport[0]
 var textArray = []
 
+//Import FCPXML template
 var xmlString = userPath.toString() + '/Library/Application Support/LyricsToFCP/FCPLyricsBlank.fcpxml'
-
 var xmlBlank = app.read(Path(xmlString))
 
 var titlePlaceholder = "<title name=\"blankTitle\" ref=\"r2\" duration=\"5s\">\n<text>\nblankTitle\n</text>\n</title>"
 
 var projectTempTitle = "<project name=\"Only a Test Lyrics Project Import\">"
 var projectNewTitle = projectTempTitle.replace("Only a Test Lyrics Project Import",songTitle)
+
 xmlBlank = xmlBlank.replace(projectTempTitle, projectNewTitle)
 
 for (var i=1; i< textImport.length; i++){
@@ -85,7 +86,6 @@ replacementString = replacementString + "\n"+ wrapTitleTags(element)
 
 var generateXML = xmlBlank.replace(titlePlaceholder, replacementString)
 
-
 //add end crossfade
 var transitionOut = "<transition name=\"Cross Dissolve\" \"offset=100s\" duration=\"1500/3000s\">\n    <filter-video ref=\"r3\" name=\"Cross Dissolve\">\n        <param name=\"Look\" key=\"1\" value=\"11 (Video)\"/>\n        <param name=\"Amount\" key=\"2\" value=\"50\"/>\n        <param name=\"Ease\" key=\"50\" value=\"2 (In &amp; Out)\"/>\n        <param name=\"Ease Amount\" key=\"51\" value=\"0\"/>\n    </filter-video>\n</transition>"
 
@@ -95,11 +95,10 @@ var titleCount = (textArray.length * 5)
 var songOffset = "offset=\"" + titleCount + "s\""
 var offsetPlaceholder = "\"offset=100s\""
 
-
 transitionOut = transitionOut.replace(offsetPlaceholder, songOffset)
 
-
 generateXML = generateXML.replace(fadeOutPlaceholder, transitionOut)
+generateXML = generateXML.replace(/[\u2018\u2019]/g,"'")
 
 //Create filepath
 
