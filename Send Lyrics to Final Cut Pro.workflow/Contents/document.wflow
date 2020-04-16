@@ -150,6 +150,8 @@ transitionOut = transitionOut.replace(offsetPlaceholder, songOffset)
 
 generateXML = generateXML.replace(fadeOutPlaceholder, transitionOut)
 generateXML = generateXML.replace(/[\u2018\u2019]/g,"'")
+generateXML = generateXML.replace(/[\u201C\u201D]/g,"\"")
+generateXML = generateXML.replace(/[\u2014]/g,"\-")
 
 //Create filepath
 
@@ -165,7 +167,8 @@ var FCP = Application('Final Cut Pro')
 FCP.activate()
 FCP.open(fileName)
 
-}</string>
+}
+</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunJavaScript</string>
@@ -220,7 +223,7 @@ FCP.open(fileName)
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>299.500000:368.000000</string>
+				<string>299.500000:767.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run JavaScript.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
