@@ -99,7 +99,7 @@ transitionOut = transitionOut.replace(offsetPlaceholder, songOffset)
 
 generateXML = generateXML.replace(fadeOutPlaceholder, transitionOut)
 generateXML = generateXML.replace(/[\u2018\u2019]/g,"'")
-generateXML = generateXML.replace(/[\u201C\u201D]/g,"\"")
+generateXML = generateXML.replace(/[\u201C\u201D]/g,"&quot")
 generateXML = generateXML.replace(/[\u2014]/g,"\-")
 
 //Create filepath
