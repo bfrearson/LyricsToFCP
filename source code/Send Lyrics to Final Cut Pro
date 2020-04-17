@@ -8,6 +8,7 @@ app.includeStandardAdditions = true
 var userPath = app.pathTo ('home folder')
 
 var lyricsInput = input.toString()
+lyricsInput = lyricsInput.replace(/"/g, "&quot;")
 
 //Applescript/JXA boilerplate function
 function writeTextToFile(text, file, overwriteExistingContent) {
@@ -99,7 +100,7 @@ transitionOut = transitionOut.replace(offsetPlaceholder, songOffset)
 
 generateXML = generateXML.replace(fadeOutPlaceholder, transitionOut)
 generateXML = generateXML.replace(/[\u2018\u2019]/g,"'")
-generateXML = generateXML.replace(/[\u201C\u201D]/g,"&quot")
+generateXML = generateXML.replace(/[\u201C\u201D]/g,"&quot;")
 generateXML = generateXML.replace(/[\u2014]/g,"\-")
 
 //Create filepath
