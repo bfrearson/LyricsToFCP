@@ -8,46 +8,26 @@ app.includeStandardAdditions = true
 var userPath = app.pathTo ('home folder')
 
 var lyricsInput = input.toString()
-lyricsInput = lyricsInput.replace(/"/g, "&quot;")
+function removeSpecialChars (input) {
+input = input.replace(/\&/g, "\&amp;")
+input = input.replace(/\"/g, "\&quot;")
+input = input.replace(/\'/g, "\&apos;")
+input = input.replace(/\</g, "\&lt;")
+input = input.replace(/\>/g, "\&gt;")
+return input
+}
 
-//Applescript/JXA boilerplate function
-function writeTextToFile(text, file, overwriteExistingContent) {
-    try {
+lyricsInput = removeSpecialChars(lyricsInput)
 
-        // Convert the file to a string
-        var fileString = file.toString()
-
-        // Open the file for writing
-        var openedFile = app.openForAccess(Path(fileString), { writePermission: true })
-
-        // Clear the file if content should be overwritten
-        if (overwriteExistingContent) {
-            app.setEof(openedFile, { to: 0 })
-        }
-
-        // Write the new content to the file
-        app.write(text, { to: openedFile, startingAt: app.getEof(openedFile) })
-
-        // Close the file
-        app.closeAccess(openedFile)
-
-        // Return a boolean indicating that writing was successful
-        return true
-    }
-    catch(error) {
-
-        try {
-            // Close the file
-            app.closeAccess(file)
-        }
-        catch(error) {
-            // Report the error is closing failed
-            console.log(`Couldn't close file: ${error}`)
-        }
-
-        // Return a boolean indicating that writing was successful
-        return false
-    }
+//Use ObjC bridge to write unicode to file
+function writeTextToFile(text, file) {
+var nsStr       = $.NSString.alloc.initWithUTF8String(text)
+var nsPath      = $(file).stringByStandardizingPath
+var successBool  = nsStr.writeToFileAtomicallyEncodingError(nsPath, true, $.NSUTF8StringEncoding, $());
+  if (!successBool) {
+    throw new Error("function writeFile ERROR:\nWrite to File FAILED for:\n" + file)
+  }
+  return successBool
 }
 
 //Generate an XML text block
@@ -99,9 +79,6 @@ var offsetPlaceholder = "\"offset=100s\""
 transitionOut = transitionOut.replace(offsetPlaceholder, songOffset)
 
 generateXML = generateXML.replace(fadeOutPlaceholder, transitionOut)
-generateXML = generateXML.replace(/[\u2018\u2019]/g,"'")
-generateXML = generateXML.replace(/[\u201C\u201D]/g,"&quot;")
-generateXML = generateXML.replace(/[\u2014]/g,"\-")
 
 //Create filepath
 
@@ -110,7 +87,7 @@ var fileDir = userPath.toString() + '/Library/Application Support/LyricsToFCP/XM
 var fileName = fileDir + songTitle + ".fcpxml";
 
 //save textblock to file
-writeTextToFile (generateXML, fileName, true)
+writeTextToFile (generateXML, fileName)
 
 //send to FCPX
 var FCP = Application('Final Cut Pro')
