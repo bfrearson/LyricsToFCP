@@ -1,5 +1,5 @@
 # LyricsToFCP
-Automator script in JXA to add lyrics to a Final Cut Pro X Library.
+Automator script in JXA to add a formatted 1/3rds lyrics overlay to a Final Cut Pro X Library.
 
 ##**Note**
 This is a *very* early release—I've not put any validation or error checking in here. I'm happy to help debug any issues, but expect things to break if you try anything werid (like special characters in the title!)
