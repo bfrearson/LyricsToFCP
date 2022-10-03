@@ -1,7 +1,7 @@
 # LyricsToFCP
 Automator script in JXA to add a formatted 1/3rds lyrics overlay to a Final Cut Pro X Library.
 
-##**Note**
+**Note**
 This is a *very* early release—I've not put any validation or error checking in here. I'm happy to help debug any issues, but expect things to break if you try anything weird (like special characters in the title!)
 
 ## **Introduction**
